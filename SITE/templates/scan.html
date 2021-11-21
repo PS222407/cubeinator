@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style3d.css')}}">
+</head>
+
+
+<body>
+    <div>
+        <img src="{{url_for('video')}}" width="100%"/>
+    </div>
+    <form method="post" action="/scan">
+
+        <input type="submit" value="Scan" name="Scan"/>
+        <input type="submit" value="Volgende" name="Volgende" />
+
+</form>
+
+<div class="c_customcube">
+ 
+        <img class="gridoverlay c_side c_top" src="{{url_for('topp')}}" width="500px" alt="fgh"/>
+  
+        <img class="gridoverlay c_side c_front" src="{{url_for('frontt')}}" width="500px" alt="fgh"/>
+
+        <img class="gridoverlay c_side c_bottom" src="{{url_for('bottomm')}}" width="500px" alt="fgh"/>
+
+        <img class="gridoverlay c_side c_left" src="{{url_for('rightt')}}" width="500px" alt="fgh"/>
+
+        <img class="gridoverlay c_side c_right" src="{{url_for('leftt')}}" width="500px" alt="fgh"/>
+
+        <img class="gridoverlay c_side c_back" src="{{url_for('backk')}}" width="500px" alt="fgh"/>
+
+</div>
+</body>
+</html>

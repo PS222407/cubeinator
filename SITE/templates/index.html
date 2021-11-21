@@ -1,0 +1,260 @@
+    <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../static/script.js" defer></script>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="iconmonstr-iconic-font-1.3.0/css/iconmonstr-iconic-font.css">
+    <link rel="stylesheet" href="../static/style3d.css">
+    <title>Rubik's Cube</title>
+</head>
+
+<body onload="checkScannedResults()">
+    <div style="padding: 16px; font-size: 32px;">
+        <input onchange="set2d()" type="checkbox" name="tweedee" id="tweedee">
+        <label for="tweedee">2d</label>
+    </div>
+    speed
+    <input oninput="setSpeed(this.value)" type="number" value="25"
+        style="height: 2em; width: 3em; text-align: center; margin-bottom: 1em;">
+    scramble length
+    <input oninput="setScrambleLength(this.value)" type="number" value="25"
+        style="height: 2em; width: 3em; text-align: center; margin-bottom: 1em;">
+    <button onclick="genScramble(this)" style="width: fit-content; margin-bottom: 10px;">random scramble</button>
+    <div id="pythontojavascript">
+        <div class="toppy">{{ cube[0] }}</div>
+        <div class="frontpy">{{ cube[1] }}</div>
+        <div class="bottompy">{{ cube[2] }}</div>
+        <div class="backpy">{{ cube[3] }}</div>
+        <div class="rightpy">{{ cube[4] }}</div>
+        <div class="leftpy">{{ cube[5] }}</div>            
+        <!-- <div class="toppy">['r', 'r', 'r', 'g', 'w', 'w', 'g', 'w', 'w']</div>
+        <div class="frontpy">['y', 'g', 'g', 'y', 'g', 'g', 'y', 'g', 'g']</div>
+        <div class="bottompy">['b', 'y', 'y', 'b', 'y', 'y', 'o', 'o', 'o']</div>
+        <div class="backpy">['b', 'b', 'b', 'b', 'b', 'b', 'w', 'w', 'w']</div>
+        <div class="rightpy">['r', 'r', 'y', 'r', 'r', 'y', 'r', 'r', 'b']</div>
+        <div class="leftpy">['w', 'o', 'o', 'w', 'o', 'o', 'g', 'o', 'o']</div>    -->
+    </div>
+    <div>
+        <textarea name="" id="customscramble" cols="30" rows="1"
+            style="padding: .5em; font-size: 1.6em; text-transform: uppercase;">F L D R' B B B R' L' F U' B' B' D' L F F' U' F' R</textarea>
+        <button style="width: max-content;" onclick="ownScramble(this)">own scramble</button>
+    </div>
+    <div class="rotate-button-container">
+        <button onclick="turnLeft()">&rArr;</button>
+        <button onclick="turnRight()">&lArr;</button>
+        <button onclick="turnUp()">&uArr;</button>
+        <button onclick="turnDown()">&dArr;</button>
+        <button onclick="turnReset()" style="width: max-content;">reset</button>
+    </div>
+    <div class="cube-static-rotation">
+        <div class="cube-container">
+            <div class="side top">
+
+            </div>
+            <div class="side front">
+
+            </div>
+            <div class="side bottom">
+
+            </div>
+            <div class="side back">
+
+            </div>
+            <div class="side right">
+
+            </div>
+            <div class="side left">
+
+            </div>
+            <div class="x"></div>
+            <div class="y"></div>
+            <div class="z"></div>
+        </div>
+    </div>
+    <div class="arrow-container">
+        <div>
+            <button onclick="rightClockwise(true); resetVariables()">R<svg
+                    style="margin-left: 2px; transform: rotateY(180deg);" xmlns="http://www.w3.org/2000/svg" width="12"
+                    height="18" viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-3.31 0-6.291 1.353-8.459 3.522l-2.48-2.48-1.061 7.341 7.437-.966-2.489-2.488c1.808-1.808 4.299-2.929 7.052-2.929 5.514 0 10 4.486 10 10s-4.486 10-10 10c-3.872 0-7.229-2.216-8.89-5.443l-1.717 1.046c2.012 3.803 6.005 6.397 10.607 6.397 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+                </svg></button>
+            <button onclick="rightCounterClockwise(true); resetVariables()">R<svg
+                    style="margin-left: 2px; transform: rotateY(0deg);" xmlns="http://www.w3.org/2000/svg" width="12"
+                    height="18" viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-3.31 0-6.291 1.353-8.459 3.522l-2.48-2.48-1.061 7.341 7.437-.966-2.489-2.488c1.808-1.808 4.299-2.929 7.052-2.929 5.514 0 10 4.486 10 10s-4.486 10-10 10c-3.872 0-7.229-2.216-8.89-5.443l-1.717 1.046c2.012 3.803 6.005 6.397 10.607 6.397 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+                </svg></button>
+        </div>
+        <div>
+            <button onclick="leftClockwise(true); resetVariables()">L<svg
+                    style="margin-left: 2px; transform: rotateY(180deg);" xmlns="http://www.w3.org/2000/svg" width="12"
+                    height="18" viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-3.31 0-6.291 1.353-8.459 3.522l-2.48-2.48-1.061 7.341 7.437-.966-2.489-2.488c1.808-1.808 4.299-2.929 7.052-2.929 5.514 0 10 4.486 10 10s-4.486 10-10 10c-3.872 0-7.229-2.216-8.89-5.443l-1.717 1.046c2.012 3.803 6.005 6.397 10.607 6.397 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+                </svg></button>
+            <button onclick="leftCounterClockwise(true); resetVariables()">L<svg
+                    style="margin-left: 2px; transform: rotateY(0deg);" xmlns="http://www.w3.org/2000/svg" width="12"
+                    height="18" viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-3.31 0-6.291 1.353-8.459 3.522l-2.48-2.48-1.061 7.341 7.437-.966-2.489-2.488c1.808-1.808 4.299-2.929 7.052-2.929 5.514 0 10 4.486 10 10s-4.486 10-10 10c-3.872 0-7.229-2.216-8.89-5.443l-1.717 1.046c2.012 3.803 6.005 6.397 10.607 6.397 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+                </svg></button>
+        </div>
+        <div>
+            <button onclick="frontClockwise(true); resetVariables()">F<svg
+                    style="margin-left: 2px; transform: rotateY(180deg);" xmlns="http://www.w3.org/2000/svg" width="12"
+                    height="18" viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-3.31 0-6.291 1.353-8.459 3.522l-2.48-2.48-1.061 7.341 7.437-.966-2.489-2.488c1.808-1.808 4.299-2.929 7.052-2.929 5.514 0 10 4.486 10 10s-4.486 10-10 10c-3.872 0-7.229-2.216-8.89-5.443l-1.717 1.046c2.012 3.803 6.005 6.397 10.607 6.397 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+                </svg></button>
+            <button onclick="frontCounterClockwise(true); resetVariables()">F<svg
+                    style="margin-left: 2px; transform: rotateY(0deg);" xmlns="http://www.w3.org/2000/svg" width="12"
+                    height="18" viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-3.31 0-6.291 1.353-8.459 3.522l-2.48-2.48-1.061 7.341 7.437-.966-2.489-2.488c1.808-1.808 4.299-2.929 7.052-2.929 5.514 0 10 4.486 10 10s-4.486 10-10 10c-3.872 0-7.229-2.216-8.89-5.443l-1.717 1.046c2.012 3.803 6.005 6.397 10.607 6.397 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+                </svg></button>
+        </div>
+        <div>
+            <button onclick="backClockwise(true); resetVariables()">B<svg
+                    style="margin-left: 2px; transform: rotateY(180deg);" xmlns="http://www.w3.org/2000/svg" width="12"
+                    height="18" viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-3.31 0-6.291 1.353-8.459 3.522l-2.48-2.48-1.061 7.341 7.437-.966-2.489-2.488c1.808-1.808 4.299-2.929 7.052-2.929 5.514 0 10 4.486 10 10s-4.486 10-10 10c-3.872 0-7.229-2.216-8.89-5.443l-1.717 1.046c2.012 3.803 6.005 6.397 10.607 6.397 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+                </svg></button>
+            <button onclick="backCounterClockwise(true); resetVariables()">B<svg
+                    style="margin-left: 2px; transform: rotateY(0deg);" xmlns="http://www.w3.org/2000/svg" width="12"
+                    height="18" viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-3.31 0-6.291 1.353-8.459 3.522l-2.48-2.48-1.061 7.341 7.437-.966-2.489-2.488c1.808-1.808 4.299-2.929 7.052-2.929 5.514 0 10 4.486 10 10s-4.486 10-10 10c-3.872 0-7.229-2.216-8.89-5.443l-1.717 1.046c2.012 3.803 6.005 6.397 10.607 6.397 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+                </svg></button>
+        </div>
+        <div>
+            <button onclick="topClockwise(true); resetVariables()">U<svg
+                    style="margin-left: 2px; transform: rotateY(180deg);" xmlns="http://www.w3.org/2000/svg" width="12"
+                    height="18" viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-3.31 0-6.291 1.353-8.459 3.522l-2.48-2.48-1.061 7.341 7.437-.966-2.489-2.488c1.808-1.808 4.299-2.929 7.052-2.929 5.514 0 10 4.486 10 10s-4.486 10-10 10c-3.872 0-7.229-2.216-8.89-5.443l-1.717 1.046c2.012 3.803 6.005 6.397 10.607 6.397 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+                </svg></button>
+            <button onclick="topCounterClockwise(true); resetVariables()">U<svg
+                    style="margin-left: 2px; transform: rotateY(0deg);" xmlns="http://www.w3.org/2000/svg" width="12"
+                    height="18" viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-3.31 0-6.291 1.353-8.459 3.522l-2.48-2.48-1.061 7.341 7.437-.966-2.489-2.488c1.808-1.808 4.299-2.929 7.052-2.929 5.514 0 10 4.486 10 10s-4.486 10-10 10c-3.872 0-7.229-2.216-8.89-5.443l-1.717 1.046c2.012 3.803 6.005 6.397 10.607 6.397 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+                </svg></button>
+        </div>
+        <div>
+            <button onclick="bottomClockwise(true); resetVariables()">D<svg
+                    style="margin-left: 2px; transform: rotateY(180deg);" xmlns="http://www.w3.org/2000/svg" width="12"
+                    height="18" viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-3.31 0-6.291 1.353-8.459 3.522l-2.48-2.48-1.061 7.341 7.437-.966-2.489-2.488c1.808-1.808 4.299-2.929 7.052-2.929 5.514 0 10 4.486 10 10s-4.486 10-10 10c-3.872 0-7.229-2.216-8.89-5.443l-1.717 1.046c2.012 3.803 6.005 6.397 10.607 6.397 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+                </svg></button>
+            <button onclick="bottomCounterClockwise(true); resetVariables()">D<svg
+                    style="margin-left: 2px; transform: rotateY(0deg);" xmlns="http://www.w3.org/2000/svg" width="12"
+                    height="18" viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-3.31 0-6.291 1.353-8.459 3.522l-2.48-2.48-1.061 7.341 7.437-.966-2.489-2.488c1.808-1.808 4.299-2.929 7.052-2.929 5.514 0 10 4.486 10 10s-4.486 10-10 10c-3.872 0-7.229-2.216-8.89-5.443l-1.717 1.046c2.012 3.803 6.005 6.397 10.607 6.397 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+                </svg></button>
+        </div>
+    </div>
+    <button style="margin: 1em; width: max-content;" id="solve-button"
+        onclick="solve(); resetArrHistory(); ">Solve</button>
+    <button style="width: max-content;" onclick="solveArduino();">Solve Arduino</button>
+    <button style="width: max-content;" onclick="solveKociemba();">Solve 20 moves</button>
+    <div class="sequence-container">
+
+    </div>
+    <button onclick="document.getElementsByClassName('scramble-sequence-container')[0].classList.toggle('opacity')"
+        style="font-size: 1em; width: fit-content; margin: 10px;">show scramble</button>
+    <div class="scramble-sequence-container opacity" style="margin-bottom: 10px;">
+
+    </div>
+
+    <form method="get" action="/scan">
+        <input type="submit" value="Scan" name="Scan" />
+    </form>
+    <div class="color-palete">
+        <button onclick="setColor('W')" style="background-color: white;">W</button>
+        <button onclick="setColor('G')" style="background-color: lime;">G</button>
+        <button onclick="setColor('Y')" style="background-color: yellow;">Y</button>
+        <button onclick="setColor('O')" style="background-color: orange;">O</button>
+        <button onclick="setColor('R')" style="background-color: red;">R</button>
+        <button onclick="setColor('B')" style="background-color: rgb(0, 110, 255);">B</button>
+    </div>
+    <div class="c_customcube">
+        <div class="c_side c_top">
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece mid" style="background-color: white;"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+        </div>
+        <div class="c_side c_front">
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece mid" style="background-color: lime;"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+        </div>
+        <div class="c_side c_bottom">
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece mid" style="background-color: yellow;"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+        </div>
+        <div class="c_side c_left">
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece mid" style="background-color: orange;"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+        </div>
+        <div class="c_side c_right">
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece mid" style="background-color: red;"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+        </div>
+        <div class="c_side c_back">
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece mid" style="background-color: rgb(0, 110, 255);"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+            <div class="c_piece"></div>
+        </div>
+    </div>
+    <button onclick="uploadCustomColors(); resetVariables();"
+        style="width: max-content; margin-bottom: 50px;">upload</button>
+</body>
+
+</html>
